@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard Air ticketing</title>
+
+  <!-- Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root{
+      --bg: #0b1220;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.09);
+      --stroke: rgba(255,255,255,.10);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.68);
+      --accent: #ff7a1a;
+      --accent2: #1aa3ff;
+      --shadow: 0 18px 60px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 800px at 15% 10%, rgba(255,122,26,.18), transparent 60%),
+        radial-gradient(1200px 800px at 85% 20%, rgba(26,163,255,.14), transparent 55%),
+        radial-gradient(900px 700px at 50% 100%, rgba(34,197,94,.10), transparent 55%),
+        var(--bg);
+      color: var(--text);
+    }
+
+    .wrap{
+      max-width: 1320px;
+      margin: 22px auto 40px;
+      padding: 0 16px;
+    }
+
+    .topbar{
+      display:flex;
+      gap:14px;
+      align-items:flex-end;
+      justify-content:space-between;
+      margin-bottom: 14px;
+    }
+
+    .brand{
+      display:flex; gap:12px; align-items:center;
+    }
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      background: linear-gradient(135deg, rgba(255,122,26,.95), rgba(26,163,255,.85));
+      box-shadow: var(--shadow);
+    }
+    .title h1{
+      margin:0;
+      font-size: 18px;
+      letter-spacing: .2px;
+    }
+    .title p{
+      margin:3px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .filters{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:end;
+      justify-content:flex-end;
+    }
+
+    .control{
+      background: var(--panel);
+      border: 1px solid var(--stroke);
+      border-radius: 14px;
+      padding: 10px 12px;
+      min-width: 180px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      backdrop-filter: blur(8px);
+    }
+    .control label{
+      display:block;
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    select, input[type="date"]{
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      color: var(--text);
+      padding: 8px 10px;
+      outline: none;
+    }
+    select:focus, input[type="date"]:focus{
+      border-color: rgba(255,122,26,.65);
+      box-shadow: 0 0 0 3px rgba(255,122,26,.18);
+    }
+
+    .btns{
+      display:flex; gap:10px;
+    }
+    button{
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-weight: 700;
+      color: #0b1220;
+      background: linear-gradient(135deg, rgba(255,122,26,1), rgba(255,171,64,1));
+      cursor:pointer;
+      box-shadow: var(--shadow);
+    }
+    button.secondary{
+      color: var(--text);
+      background: rgba(255,255,255,.08);
+      border: 1px solid var(--stroke);
+      box-shadow: none;
+    }
+    button:active{transform: translateY(1px)}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr .9fr;
+      gap: 14px;
+      align-items:start;
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(8px);
+    }
+
+    .cardHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 14px 14px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .cardHeader .h{
+      font-weight: 800;
+      letter-spacing:.3px;
+      font-size: 13px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.86);
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .pill{
+      font-size: 11px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(255,122,26,.14);
+      border: 1px solid rgba(255,122,26,.25);
+      color: rgba(255,255,255,.86);
+    }
+
+    .tableWrap{
+      padding: 10px 12px 14px;
+      overflow:auto;
+      max-height: 590px;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width: 760px;
+    }
+    thead th{
+      position: sticky;
+      top: 0;
+      background: rgba(10,16,30,.92);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      font-size: 11px;
+      color: rgba(255,255,255,.78);
+      text-transform: uppercase;
+      letter-spacing: .3px;
+      padding: 10px 10px;
+      text-align:left;
+      z-index: 2;
+    }
+    tbody td{
+      padding: 10px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      font-size: 12px;
+      color: rgba(255,255,255,.88);
+      white-space: nowrap;
+    }
+    tbody tr:hover{
+      background: rgba(255,255,255,.05);
+    }
+    .num{ text-align:right; font-variant-numeric: tabular-nums; }
+    .muted{ color: var(--muted); }
+
+    .rightCol{
+      display:flex;
+      flex-direction:column;
+      gap: 14px;
+    }
+
+    .kpis{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding: 12px;
+    }
+    .kpi{
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      padding: 12px;
+    }
+    .kpi .label{
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .kpi .value{
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: .2px;
+    }
+
+    .charts{
+      padding: 12px;
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+    }
+    .chartBox{
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      padding: 12px;
+    }
+    .chartTitle{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom: 8px;
+    }
+    .chartTitle b{
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .3px;
+      color: rgba(255,255,255,.82);
+    }
+    .chartTitle span{
+      font-size: 11px;
+      color: var(--muted);
+    }
+    canvas{ width:100% !important; height: 260px !important; }
+
+    .footerNote{
+      padding: 10px 14px 14px;
+      color: var(--muted);
+      font-size: 11px;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+
+    @media (max-width: 1100px){
+      .grid{ grid-template-columns: 1fr; }
+      table{ min-width: 860px; }
+      .topbar{ align-items:flex-start; flex-direction:column; }
+      .filters{ justify-content:flex-start; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div class="title">
+          <h1>Dashboard Air Ticketing</h1>
+          <p>Amount actual & Plan IBS</p>
+        </div>
+      </div>
+
+      <div class="filters">
+        <div class="control">
+          <label>Site (Distrik)</label>
+          <select id="siteSelect"></select>
+        </div>
+
+        <div class="control">
+          <label>Dari Tanggal</label>
+          <input id="dateFrom" type="date" />
+        </div>
+
+        <div class="control">
+          <label>Sampai Tanggal</label>
+          <input id="dateTo" type="date" />
+        </div>
+
+        <div class="btns">
+          <button id="applyBtn">Apply</button>
+          <button class="secondary" id="resetBtn">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- LEFT: TABLE -->
+      <div class="card">
+        <div class="cardHeader">
+          <div class="h">
+            <span>Range Tanggal</span>
+            <span class="pill" id="rangeLabel">-</span>
+          </div>
+          <div class="pill" id="rowCount">0 rows</div>
+        </div>
+
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>SITE</th>
+                <th class="num">Lead Time</th>
+                <th class="num">Qty</th>
+                <th class="num">Plan Budget IBS</th>
+                <th class="num">Amount</th>
+                <th class="num">ATP</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+
+        <div class="footerNote">
+          Data contoh (dummy). Ganti variabel <b>data</b> atau tarik dari API (fetch) lalu panggil <b>applyFilters()</b>.
+        </div>
+      </div>
+
+      <!-- RIGHT: KPI + CHARTS -->
+      <div class="rightCol">
+        <div class="card">
+          <div class="cardHeader">
+            <div class="h">
+              <span>Summary</span>
+              <span class="pill" id="summarySite">All Site</span>
+            </div>
+            <div class="pill" id="summaryDate">-</div>
+          </div>
+
+          <div class="kpis">
+            <div class="kpi">
+              <div class="label">Jumlah Tiket Request</div>
+              <div class="value" id="kpiReq">0</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Jumlah Tiket Issued</div>
+              <div class="value" id="kpiIssued">0</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Amount Tiket Issued</div>
+              <div class="value" id="kpiAmount">Rp 0</div>
+            </div>
+            <div class="kpi">
+              <div class="label">Rata-rata Lead Time Issued</div>
+              <div class="value" id="kpiLead">0 Hari</div>
+            </div>
+          </div>
+
+          <div class="charts">
+            <div class="chartBox">
+              <div class="chartTitle">
+                <b>Top Maskapai</b>
+                <span>Amount vs Qty</span>
+              </div>
+              <canvas id="airlineChart"></canvas>
+            </div>
+
+            <div class="chartBox">
+              <div class="chartTitle">
+                <b>ATP Route</b>
+                <span>ATP vs Qty</span>
+              </div>
+              <canvas id="routeChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+  // =========================
+  // 1) CONTOH DATA (DUMMY)
+  // =========================
+  // date: YYYY-MM-DD (biar mudah filter range)
+  const data = [
+    {date:"2026-02-01", site:"ABKL", leadTime:21, qty:737,  planBudgetIBS: 900_000_000,  amount: 997_942_494,  atp: 1_354_060, airline:"LION AIR",   route:"YIA-BPN", requested: 740, issued: 737},
+    {date:"2026-02-02", site:"ARIA", leadTime:32, qty:903,  planBudgetIBS: 1_150_000_000,amount: 1_265_862_691,atp: 1_401_841, airline:"SUPER AIR", route:"BPN-YIA", requested: 910, issued: 903},
+    {date:"2026-02-03", site:"ASMI", leadTime:22, qty:2723, planBudgetIBS: 3_300_000_000,amount: 3_600_584_522,atp: 1_322_286, airline:"CITILINK",  route:"CGK-CKG", requested: 2750, issued: 2723},
+    {date:"2026-02-04", site:"BAYA", leadTime:28, qty:2963, planBudgetIBS: 4_000_000_000,amount: 4_260_461_441,atp: 1_437_888, airline:"GARUDA",    route:"CKG-BPN", requested: 3000, issued: 2963},
+    {date:"2026-02-05", site:"BEKB", leadTime:21, qty:1556, planBudgetIBS: 1_900_000_000,amount: 1_987_127_388,atp: 1_277_074, airline:"WINGS AIR", route:"SUB-BPN", requested: 1600, issued: 1556},
+    {date:"2026-02-05", site:"BRCB", leadTime:22, qty:1722, planBudgetIBS: 4_200_000_000,amount: 4_593_529_751,atp: 2_667_555, airline:"BATIK AIR", route:"BPN-SUB", requested: 1750, issued: 1722},
+    {date:"2026-02-06", site:"BRCG", leadTime:25, qty:1040, planBudgetIBS: 2_450_000_000,amount: 2_687_897_924,atp: 2_584_517, airline:"PELITA AIR",route:"BPN-SRG", requested: 1100, issued: 1040},
+    {date:"2026-02-07", site:"BTSJ", leadTime:26, qty:999,  planBudgetIBS: 1_350_000_000,amount: 1_417_052_606,atp: 1_419_892, airline:"LION AIR",  route:"PKY-SRG", requested: 1030, issued: 999},
+    {date:"2026-02-08", site:"INDO", leadTime:24, qty:3313, planBudgetIBS: 4_450_000_000,amount: 4_670_616_190,atp: 1_409_785, airline:"CITILINK", route:"SRG-PKY", requested: 3400, issued: 3313},
+    {date:"2026-02-09", site:"KIDE", leadTime:33, qty:4724, planBudgetIBS: 6_100_000_000,amount: 6_545_419_305,atp: 1_385_567, airline:"GARUDA",   route:"BPN-CKG", requested: 4800, issued: 4724},
+  ];
+
+  // =========================
+  // 2) UTIL
+  // =========================
+  const fmtInt = (n) => (n ?? 0).toLocaleString("id-ID");
+  const fmtIDR = (n) => "Rp " + (n ?? 0).toLocaleString("id-ID");
+  const parseDate = (s) => new Date(s + "T00:00:00");
+
+  function dateInRange(d, from, to){
+    const x = parseDate(d).getTime();
+    if (from && x < parseDate(from).getTime()) return false;
+    if (to && x > parseDate(to).getTime()) return false;
+    return true;
+  }
+
+  function groupSum(rows, key, fields){
+    const map = new Map();
+    for (const r of rows){
+      const k = r[key] ?? "(Unknown)";
+      if (!map.has(k)) map.set(k, {...Object.fromEntries(fields.map(f=>[f,0]))});
+      const obj = map.get(k);
+      for (const f of fields) obj[f] += (Number(r[f]) || 0);
+    }
+    return [...map.entries()].map(([k,v])=>({key:k, ...v}));
+  }
+
+  function avg(rows, field){
+    if (!rows.length) return 0;
+    const sum = rows.reduce((a,r)=>a+(Number(r[field])||0),0);
+    return sum / rows.length;
+  }
+
+  // =========================
+  // 3) CHARTS
+  // =========================
+  let airlineChart, routeChart;
+
+  function buildCharts(){
+    airlineChart = new Chart(document.getElementById("airlineChart"), {
+      type: "bar",
+      data: { labels: [], datasets: [
+        { label: "Amount", data: [] },
+        { label: "Qty", data: [], type: "line", yAxisID: "y1", tension: .35, pointRadius: 2 }
+      ]},
+      options: {
+        responsive: true,
+        plugins: { legend: { labels:{ color:"rgba(255,255,255,.75)" } } },
+        scales: {
+          x: { ticks:{ color:"rgba(255,255,255,.7)" }, grid:{ color:"rgba(255,255,255,.06)" } },
+          y: { ticks:{ color:"rgba(255,255,255,.7)", callback:(v)=>fmtInt(v) }, grid:{ color:"rgba(255,255,255,.06)" } },
+          y1:{ position:"right", ticks:{ color:"rgba(255,255,255,.7)" }, grid:{ drawOnChartArea:false } }
+        }
+      }
+    });
+
+    routeChart = new Chart(document.getElementById("routeChart"), {
+      type: "bar",
+      data: { labels: [], datasets: [
+        { label: "ATP (avg)", data: [] },
+        { label: "Qty", data: [], type:"line", yAxisID:"y1", tension:.35, pointRadius:2 }
+      ]},
+      options: {
+        responsive: true,
+        plugins: { legend: { labels:{ color:"rgba(255,255,255,.75)" } } },
+        scales: {
+          x: { ticks:{ color:"rgba(255,255,255,.7)" }, grid:{ color:"rgba(255,255,255,.06)" } },
+          y: { ticks:{ color:"rgba(255,255,255,.7)", callback:(v)=>fmtInt(v) }, grid:{ color:"rgba(255,255,255,.06)" } },
+          y1:{ position:"right", ticks:{ color:"rgba(255,255,255,.7)" }, grid:{ drawOnChartArea:false } }
+        }
+      }
+    });
+  }
+
+  function updateCharts(rows){
+    const byAir = groupSum(rows, "airline", ["amount","qty"])
+      .sort((a,b)=>b.amount-a.amount)
+      .slice(0, 8);
+
+    airlineChart.data.labels = byAir.map(x=>x.key);
+    airlineChart.data.datasets[0].data = byAir.map(x=>x.amount);
+    airlineChart.data.datasets[1].data = byAir.map(x=>x.qty);
+    airlineChart.update();
+
+    // avg ATP per route + qty
+    const m = new Map();
+    for (const r of rows){
+      const k = r.route ?? "(Unknown)";
+      if (!m.has(k)) m.set(k, {sumATP:0, count:0, qty:0});
+      const o = m.get(k);
+      o.sumATP += (Number(r.atp)||0);
+      o.count += 1;
+      o.qty += (Number(r.qty)||0);
+    }
+    const byRoute = [...m.entries()].map(([k,v])=>({
+      key:k,
+      atpAvg: v.count ? v.sumATP / v.count : 0,
+      qty: v.qty
+    }))
+    .sort((a,b)=>b.atpAvg-a.atpAvg)
+    .slice(0, 10);
+
+    routeChart.data.labels = byRoute.map(x=>x.key);
+    routeChart.data.datasets[0].data = byRoute.map(x=>Math.round(x.atpAvg));
+    routeChart.data.datasets[1].data = byRoute.map(x=>x.qty);
+    routeChart.update();
+  }
+
+  // =========================
+  // 4) RENDER
+  // =========================
+  function render(rows){
+    const from = document.getElementById("dateFrom").value;
+    const to = document.getElementById("dateTo").value;
+
+    const rangeText = (from || to) ? `${from || "…"} → ${to || "…"}`
+                                   : "All Dates";
+    document.getElementById("rangeLabel").textContent = rangeText;
+    document.getElementById("summaryDate").textContent = rangeText;
+
+    const tbody = document.getElementById("tbody");
+    tbody.innerHTML = "";
+
+    const sorted = [...rows].sort((a,b)=> (b.amount||0) - (a.amount||0));
+    for (const r of sorted){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><b>${r.site}</b></td>
+        <td class="num">${fmtInt(r.leadTime)}</td>
+        <td class="num">${fmtInt(r.qty)}</td>
+        <td class="num">${fmtIDR(r.planBudgetIBS)}</td>
+        <td class="num">${fmtIDR(r.amount)}</td>
+        <td class="num">${fmtIDR(r.atp)}</td>
+      `;
+      tbody.appendChild(tr);
+    }
+    document.getElementById("rowCount").textContent = `${rows.length} rows`;
+
+    const totalReq = rows.reduce((a,r)=>a+(Number(r.requested)||0),0);
+    const totalIssued = rows.reduce((a,r)=>a+(Number(r.issued)||0),0);
+    const totalAmount = rows.reduce((a,r)=>a+(Number(r.amount)||0),0);
+    const leadAvg = avg(rows, "leadTime");
+
+    document.getElementById("kpiReq").textContent = fmtInt(totalReq);
+    document.getElementById("kpiIssued").textContent = fmtInt(totalIssued);
+    document.getElementById("kpiAmount").textContent = fmtIDR(totalAmount);
+    document.getElementById("kpiLead").textContent = `${Math.round(leadAvg)} Hari`;
+
+    updateCharts(rows);
+  }
+
+  function applyFilters(){
+    const site = document.getElementById("siteSelect").value;
+    const from = document.getElementById("dateFrom").value;
+    const to = document.getElementById("dateTo").value;
+
+    const rows = data.filter(r => {
+      const okSite = (site === "__ALL__") ? true : (r.site === site);
+      const okDate = dateInRange(r.date, from, to);
+      return okSite && okDate;
+    });
+
+    document.getElementById("summarySite").textContent =
+      (site === "__ALL__") ? "All Site" : site;
+
+    render(rows);
+  }
+
+  function resetFilters(){
+    document.getElementById("siteSelect").value = "__ALL__";
+    document.getElementById("dateFrom").value = "";
+    document.getElementById("dateTo").value = "";
+    applyFilters();
+  }
+
+  // =========================
+  // 5) INIT
+  // =========================
+  function init(){
+    // dropdown site (Distrik = Site)
+    const sites = ["__ALL__", ...Array.from(new Set(data.map(d=>d.site))).sort()];
+    const sel = document.getElementById("siteSelect");
+    sel.innerHTML = "";
+    for (const s of sites){
+      const opt = document.createElement("option");
+      opt.value = (s === "__ALL__") ? "__ALL__" : s;
+      opt.textContent = (s === "__ALL__") ? "All Site" : s;
+      sel.appendChild(opt);
+    }
+
+    buildCharts();
+
+    document.getElementById("applyBtn").addEventListener("click", applyFilters);
+    document.getElementById("resetBtn").addEventListener("click", resetFilters);
+
+    // auto update biar interaktif
+    sel.addEventListener("change", applyFilters);
+    document.getElementById("dateFrom").addEventListener("change", applyFilters);
+    document.getElementById("dateTo").addEventListener("change", applyFilters);
+
+    resetFilters();
+  }
+
+  init();
+</script>
+</body>
+</html>

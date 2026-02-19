@@ -3,30 +3,25 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dashboard Air ticketing</title>
+  <title>Dashboard IBS — Ticket Issued</title>
 
-  <!-- Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
   <style>
     :root{
-      --bg: #0b1220;
+      --bg:#0b1220;
       --panel: rgba(255,255,255,.06);
-      --panel2: rgba(255,255,255,.09);
       --stroke: rgba(255,255,255,.10);
       --text: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.68);
-      --accent: #ff7a1a;
-      --accent2: #1aa3ff;
+      --accent:#ff7a1a;
       --shadow: 0 18px 60px rgba(0,0,0,.35);
       --radius: 18px;
     }
-
     *{box-sizing:border-box}
     body{
       margin:0;
@@ -38,48 +33,19 @@
         var(--bg);
       color: var(--text);
     }
+    .wrap{ max-width:1320px; margin:22px auto 40px; padding:0 16px; }
 
-    .wrap{
-      max-width: 1320px;
-      margin: 22px auto 40px;
-      padding: 0 16px;
-    }
-
-    .topbar{
-      display:flex;
-      gap:14px;
-      align-items:flex-end;
-      justify-content:space-between;
-      margin-bottom: 14px;
-    }
-
-    .brand{
-      display:flex; gap:12px; align-items:center;
-    }
+    .topbar{ display:flex; gap:14px; align-items:flex-end; justify-content:space-between; margin-bottom:14px; }
+    .brand{ display:flex; gap:12px; align-items:center; }
     .logo{
       width:44px;height:44px;border-radius:14px;
       background: linear-gradient(135deg, rgba(255,122,26,.95), rgba(26,163,255,.85));
       box-shadow: var(--shadow);
     }
-    .title h1{
-      margin:0;
-      font-size: 18px;
-      letter-spacing: .2px;
-    }
-    .title p{
-      margin:3px 0 0;
-      font-size: 12px;
-      color: var(--muted);
-    }
+    .title h1{ margin:0; font-size:18px; letter-spacing:.2px; }
+    .title p{ margin:3px 0 0; font-size:12px; color:var(--muted); }
 
-    .filters{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      align-items:end;
-      justify-content:flex-end;
-    }
-
+    .filters{ display:flex; flex-wrap:wrap; gap:10px; align-items:end; justify-content:flex-end; }
     .control{
       background: var(--panel);
       border: 1px solid var(--stroke);
@@ -89,53 +55,43 @@
       box-shadow: 0 10px 30px rgba(0,0,0,.25);
       backdrop-filter: blur(8px);
     }
-    .control label{
-      display:block;
-      font-size: 11px;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
+    .control label{ display:block; font-size:11px; color:var(--muted); margin-bottom:6px; }
     select, input[type="date"]{
-      width: 100%;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,.12);
+      width:100%;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.12);
       background: rgba(0,0,0,.22);
       color: var(--text);
-      padding: 8px 10px;
-      outline: none;
+      padding:8px 10px;
+      outline:none;
     }
     select:focus, input[type="date"]:focus{
       border-color: rgba(255,122,26,.65);
       box-shadow: 0 0 0 3px rgba(255,122,26,.18);
     }
 
-    .btns{
-      display:flex; gap:10px;
-    }
+    .btns{ display:flex; gap:10px; }
     button{
-      border: 0;
-      border-radius: 14px;
-      padding: 12px 14px;
-      font-weight: 700;
-      color: #0b1220;
+      border:0; border-radius:14px; padding:12px 14px;
+      font-weight:700; color:#0b1220;
       background: linear-gradient(135deg, rgba(255,122,26,1), rgba(255,171,64,1));
-      cursor:pointer;
-      box-shadow: var(--shadow);
+      cursor:pointer; box-shadow: var(--shadow);
     }
     button.secondary{
       color: var(--text);
       background: rgba(255,255,255,.08);
-      border: 1px solid var(--stroke);
-      box-shadow: none;
+      border:1px solid var(--stroke);
+      box-shadow:none;
     }
-    button:active{transform: translateY(1px)}
 
     .grid{
       display:grid;
       grid-template-columns: 1.2fr .9fr;
-      gap: 14px;
+      gap:14px;
       align-items:start;
     }
+
+    .leftCol{ display:flex; flex-direction:column; gap:14px; }
 
     .card{
       background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
@@ -145,129 +101,95 @@
       overflow:hidden;
       backdrop-filter: blur(8px);
     }
-
     .cardHeader{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding: 14px 14px 10px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 14px 10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      gap:10px;
+      flex-wrap:wrap;
     }
     .cardHeader .h{
-      font-weight: 800;
-      letter-spacing:.3px;
-      font-size: 13px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,.86);
-      display:flex;
-      gap:10px;
-      align-items:center;
+      font-weight:800; letter-spacing:.3px; font-size:13px;
+      text-transform:uppercase; color:rgba(255,255,255,.86);
+      display:flex; gap:10px; align-items:center;
     }
     .pill{
-      font-size: 11px;
-      padding: 5px 10px;
-      border-radius: 999px;
+      font-size:11px;
+      padding:5px 10px;
+      border-radius:999px;
       background: rgba(255,122,26,.14);
       border: 1px solid rgba(255,122,26,.25);
       color: rgba(255,255,255,.86);
+      white-space:nowrap;
     }
 
     .tableWrap{
       padding: 10px 12px 14px;
       overflow:auto;
-      max-height: 590px;
+      max-height: 420px;
     }
-
-    table{
-      width:100%;
-      border-collapse:collapse;
-      min-width: 760px;
-    }
+    table{ width:100%; border-collapse:collapse; min-width: 860px; }
     thead th{
-      position: sticky;
-      top: 0;
+      position: sticky; top:0;
       background: rgba(10,16,30,.92);
       backdrop-filter: blur(6px);
-      border-bottom: 1px solid rgba(255,255,255,.10);
-      font-size: 11px;
-      color: rgba(255,255,255,.78);
-      text-transform: uppercase;
-      letter-spacing: .3px;
-      padding: 10px 10px;
-      text-align:left;
-      z-index: 2;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      font-size:11px; color: rgba(255,255,255,.78);
+      text-transform: uppercase; letter-spacing:.3px;
+      padding:10px 10px; text-align:left;
+      z-index:2;
     }
     tbody td{
-      padding: 10px 10px;
-      border-bottom: 1px solid rgba(255,255,255,.06);
-      font-size: 12px;
-      color: rgba(255,255,255,.88);
-      white-space: nowrap;
+      padding:10px 10px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      font-size:12px;
+      white-space:nowrap;
     }
-    tbody tr:hover{
-      background: rgba(255,255,255,.05);
-    }
+    tbody tr:hover{ background: rgba(255,255,255,.05); }
     .num{ text-align:right; font-variant-numeric: tabular-nums; }
     .muted{ color: var(--muted); }
 
-    .rightCol{
-      display:flex;
-      flex-direction:column;
-      gap: 14px;
-    }
-
-    .kpis{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      padding: 12px;
-    }
-    .kpi{
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 16px;
-      padding: 12px;
-    }
-    .kpi .label{
-      font-size: 11px;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-    .kpi .value{
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: .2px;
-    }
-
-    .charts{
-      padding: 12px;
-      display:flex;
-      flex-direction:column;
-      gap: 12px;
-    }
-    .chartBox{
-      background: rgba(255,255,255,.05);
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 16px;
-      padding: 12px;
-    }
-    .chartTitle{
+    /* ===== Daily slider (collapse/expand) ===== */
+    .collapseBtn{
       display:flex;
       align-items:center;
-      justify-content:space-between;
-      margin-bottom: 8px;
+      gap:10px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.10);
+      color: rgba(255,255,255,.86);
+      border-radius: 999px;
+      padding: 8px 12px;
+      cursor:pointer;
+      user-select:none;
     }
-    .chartTitle b{
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .3px;
-      color: rgba(255,255,255,.82);
+    .chev{
+      width: 10px; height: 10px;
+      border-right: 2px solid rgba(255,255,255,.72);
+      border-bottom: 2px solid rgba(255,255,255,.72);
+      transform: rotate(45deg);
+      transition: transform .18s ease;
+      margin-top:-2px;
     }
-    .chartTitle span{
-      font-size: 11px;
-      color: var(--muted);
+    .collapsed .chev{ transform: rotate(-45deg); }
+
+    .collapseBody{
+      overflow:hidden;
+      max-height: 720px;
+      transition: max-height .25s ease;
     }
-    canvas{ width:100% !important; height: 260px !important; }
+    .collapsed .collapseBody{
+      max-height: 0;
+    }
+
+    .subControls{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .subControls .control{ min-width: 220px; padding: 8px 10px; }
+    .subControls .control label{ margin-bottom: 4px; }
 
     .footerNote{
       padding: 10px 14px 14px;
@@ -276,9 +198,46 @@
       border-top: 1px solid rgba(255,255,255,.08);
     }
 
+    .rightCol{ display:flex; flex-direction:column; gap:14px; }
+    .kpis{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      padding:12px;
+    }
+    .kpi{
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      padding:12px;
+    }
+    .kpi .label{ font-size:11px; color: var(--muted); margin-bottom:8px; }
+    .kpi .value{ font-size:18px; font-weight:800; }
+
+    .charts{ padding:12px; display:flex; flex-direction:column; gap:12px; }
+    .chartBox{
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      padding:12px;
+    }
+    .chartTitle{
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:8px;
+    }
+    .chartTitle b{
+      font-size:12px; text-transform:uppercase; letter-spacing:.3px;
+      color: rgba(255,255,255,.82);
+    }
+    .chartTitle span{ font-size:11px; color: var(--muted); }
+
+    /* IMPORTANT: chart responsive + fixed wrap height */
+    .chartCanvasWrap{ height: 260px; }
+    .chartCanvasWrap canvas{ width:100% !important; height:100% !important; }
+
     @media (max-width: 1100px){
       .grid{ grid-template-columns: 1fr; }
-      table{ min-width: 860px; }
+      table{ min-width: 980px; }
       .topbar{ align-items:flex-start; flex-direction:column; }
       .filters{ justify-content:flex-start; }
     }
@@ -291,27 +250,24 @@
       <div class="brand">
         <div class="logo"></div>
         <div class="title">
-          <h1>Dashboard Air Ticketing</h1>
-          <p>Amount actual & Plan IBS</p>
+          <h1>Dashboard IBS — Ticket Issued</h1>
+          <p>Ringkasan di atas, Transaksi Harian di bawah (bisa slide collapse/expand)</p>
         </div>
       </div>
 
       <div class="filters">
         <div class="control">
-          <label>Site (Distrik)</label>
+          <label>Site</label>
           <select id="siteSelect"></select>
         </div>
-
         <div class="control">
           <label>Dari Tanggal</label>
           <input id="dateFrom" type="date" />
         </div>
-
         <div class="control">
           <label>Sampai Tanggal</label>
           <input id="dateTo" type="date" />
         </div>
-
         <div class="btns">
           <button id="applyBtn">Apply</button>
           <button class="secondary" id="resetBtn">Reset</button>
@@ -320,38 +276,92 @@
     </div>
 
     <div class="grid">
-      <!-- LEFT: TABLE -->
-      <div class="card">
-        <div class="cardHeader">
-          <div class="h">
-            <span>Range Tanggal</span>
-            <span class="pill" id="rangeLabel">-</span>
+      <!-- LEFT -->
+      <div class="leftCol">
+
+        <!-- SUMMARY TABLE -->
+        <div class="card">
+          <div class="cardHeader">
+            <div class="h">
+              <span>Ringkasan Site</span>
+              <span class="pill" id="rangeLabel">-</span>
+            </div>
+            <div class="pill" id="rowCount">0 rows</div>
           </div>
-          <div class="pill" id="rowCount">0 rows</div>
+
+          <div class="tableWrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>SITE</th>
+                  <th class="num">Lead Time</th>
+                  <th class="num">Qty</th>
+                  <th class="num">Plan Budget IBS</th>
+                  <th class="num">Amount</th>
+                  <th class="num">ATP</th>
+                </tr>
+              </thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+
+          <div class="footerNote">
+            Ringkasan berdasarkan filter utama (site + range tanggal).
+          </div>
         </div>
 
-        <div class="tableWrap">
-          <table>
-            <thead>
-              <tr>
-                <th>SITE</th>
-                <th class="num">Lead Time</th>
-                <th class="num">Qty</th>
-                <th class="num">Plan Budget IBS</th>
-                <th class="num">Amount</th>
-                <th class="num">ATP</th>
-              </tr>
-            </thead>
-            <tbody id="tbody"></tbody>
-          </table>
+        <!-- DAILY TRANSACTIONS (COLLAPSIBLE) -->
+        <div class="card" id="dailyCard">
+          <div class="cardHeader">
+            <div class="h">
+              <span>Transaksi Harian</span>
+              <span class="pill" id="dailyLabel">All Dates</span>
+            </div>
+
+            <div class="subControls">
+              <div class="control" style="min-width:220px">
+                <label>Tanggal Transaksi</label>
+                <input id="dailyDate" type="date" />
+              </div>
+
+              <div class="pill" id="dailyCount">0 transaksi</div>
+
+              <!-- slider/collapse -->
+              <div class="collapseBtn" id="dailyToggle" title="Show/Hide Transaksi Harian">
+                <span class="muted" style="font-weight:800; font-size:12px;">Slide</span>
+                <span class="chev"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="collapseBody" id="dailyBody">
+            <div class="tableWrap" style="max-height: 360px;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Tanggal</th>
+                    <th>Site</th>
+                    <th>Transaksi ID</th>
+                    <th>Maskapai</th>
+                    <th>Rute</th>
+                    <th class="num">Qty</th>
+                    <th class="num">Amount</th>
+                    <th class="num">Plan Budget IBS</th>
+                  </tr>
+                </thead>
+                <tbody id="dailyTbody"></tbody>
+              </table>
+            </div>
+
+            <div class="footerNote">
+              Filter tanggal khusus untuk transaksi harian. (Terpisah dari filter utama di atas)
+            </div>
+          </div>
         </div>
 
-        <div class="footerNote">
-          Data contoh (dummy). Ganti variabel <b>data</b> atau tarik dari API (fetch) lalu panggil <b>applyFilters()</b>.
-        </div>
       </div>
 
-      <!-- RIGHT: KPI + CHARTS -->
+      <!-- RIGHT -->
       <div class="rightCol">
         <div class="card">
           <div class="cardHeader">
@@ -387,7 +397,9 @@
                 <b>Top Maskapai</b>
                 <span>Amount vs Qty</span>
               </div>
-              <canvas id="airlineChart"></canvas>
+              <div class="chartCanvasWrap">
+                <canvas id="airlineChart"></canvas>
+              </div>
             </div>
 
             <div class="chartBox">
@@ -395,9 +407,12 @@
                 <b>ATP Route</b>
                 <span>ATP vs Qty</span>
               </div>
-              <canvas id="routeChart"></canvas>
+              <div class="chartCanvasWrap">
+                <canvas id="routeChart"></canvas>
+              </div>
             </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -406,9 +421,8 @@
 
 <script>
   // =========================
-  // 1) CONTOH DATA (DUMMY)
+  // DATA UTAMA (SUMMARY)
   // =========================
-  // date: YYYY-MM-DD (biar mudah filter range)
   const data = [
     {date:"2026-02-01", site:"ABKL", leadTime:21, qty:737,  planBudgetIBS: 900_000_000,  amount: 997_942_494,  atp: 1_354_060, airline:"LION AIR",   route:"YIA-BPN", requested: 740, issued: 737},
     {date:"2026-02-02", site:"ARIA", leadTime:32, qty:903,  planBudgetIBS: 1_150_000_000,amount: 1_265_862_691,atp: 1_401_841, airline:"SUPER AIR", route:"BPN-YIA", requested: 910, issued: 903},
@@ -423,19 +437,29 @@
   ];
 
   // =========================
-  // 2) UTIL
+  // DATA TRANSAKSI HARIAN
+  // =========================
+  const dailyTransactions = [
+    {date:"2026-02-05", site:"ABKL", trxId:"TRX-0001", airline:"LION AIR", route:"YIA-BPN", qty:12, amount: 18_000_000, planBudgetIBS: 20_000_000},
+    {date:"2026-02-05", site:"ABKL", trxId:"TRX-0002", airline:"LION AIR", route:"YIA-BPN", qty:8,  amount: 12_500_000, planBudgetIBS: 15_000_000},
+    {date:"2026-02-05", site:"BRCB", trxId:"TRX-0003", airline:"BATIK AIR", route:"BPN-SUB", qty:6,  amount: 14_200_000, planBudgetIBS: 14_000_000},
+    {date:"2026-02-06", site:"BRCG", trxId:"TRX-0004", airline:"PELITA AIR", route:"BPN-SRG", qty:4, amount:  9_500_000, planBudgetIBS: 10_000_000},
+    {date:"2026-02-06", site:"INDO", trxId:"TRX-0005", airline:"CITILINK", route:"SRG-PKY", qty:10, amount: 16_800_000, planBudgetIBS: 17_000_000},
+    {date:"2026-02-07", site:"KIDE", trxId:"TRX-0006", airline:"GARUDA", route:"BPN-CKG", qty:5, amount: 11_100_000, planBudgetIBS: 12_000_000},
+  ];
+
+  // =========================
+  // UTIL
   // =========================
   const fmtInt = (n) => (n ?? 0).toLocaleString("id-ID");
   const fmtIDR = (n) => "Rp " + (n ?? 0).toLocaleString("id-ID");
   const parseDate = (s) => new Date(s + "T00:00:00");
-
   function dateInRange(d, from, to){
     const x = parseDate(d).getTime();
     if (from && x < parseDate(from).getTime()) return false;
     if (to && x > parseDate(to).getTime()) return false;
     return true;
   }
-
   function groupSum(rows, key, fields){
     const map = new Map();
     for (const r of rows){
@@ -446,7 +470,6 @@
     }
     return [...map.entries()].map(([k,v])=>({key:k, ...v}));
   }
-
   function avg(rows, field){
     if (!rows.length) return 0;
     const sum = rows.reduce((a,r)=>a+(Number(r[field])||0),0);
@@ -454,25 +477,29 @@
   }
 
   // =========================
-  // 3) CHARTS
+  // CHARTS
   // =========================
   let airlineChart, routeChart;
-
   function buildCharts(){
+    const common = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { labels:{ color:"rgba(255,255,255,.75)" } } },
+      scales: {
+        x: { ticks:{ color:"rgba(255,255,255,.7)" }, grid:{ color:"rgba(255,255,255,.06)" } },
+        y: { ticks:{ color:"rgba(255,255,255,.7)", callback:(v)=>fmtInt(v) }, grid:{ color:"rgba(255,255,255,.06)" } },
+      }
+    };
+
     airlineChart = new Chart(document.getElementById("airlineChart"), {
       type: "bar",
       data: { labels: [], datasets: [
         { label: "Amount", data: [] },
-        { label: "Qty", data: [], type: "line", yAxisID: "y1", tension: .35, pointRadius: 2 }
+        { label: "Qty", data: [], type:"line", yAxisID:"y1", tension:.35, pointRadius:2 }
       ]},
       options: {
-        responsive: true,
-        plugins: { legend: { labels:{ color:"rgba(255,255,255,.75)" } } },
-        scales: {
-          x: { ticks:{ color:"rgba(255,255,255,.7)" }, grid:{ color:"rgba(255,255,255,.06)" } },
-          y: { ticks:{ color:"rgba(255,255,255,.7)", callback:(v)=>fmtInt(v) }, grid:{ color:"rgba(255,255,255,.06)" } },
-          y1:{ position:"right", ticks:{ color:"rgba(255,255,255,.7)" }, grid:{ drawOnChartArea:false } }
-        }
+        ...common,
+        scales: { ...common.scales, y1:{ position:"right", ticks:{ color:"rgba(255,255,255,.7)" }, grid:{ drawOnChartArea:false } } }
       }
     });
 
@@ -483,13 +510,8 @@
         { label: "Qty", data: [], type:"line", yAxisID:"y1", tension:.35, pointRadius:2 }
       ]},
       options: {
-        responsive: true,
-        plugins: { legend: { labels:{ color:"rgba(255,255,255,.75)" } } },
-        scales: {
-          x: { ticks:{ color:"rgba(255,255,255,.7)" }, grid:{ color:"rgba(255,255,255,.06)" } },
-          y: { ticks:{ color:"rgba(255,255,255,.7)", callback:(v)=>fmtInt(v) }, grid:{ color:"rgba(255,255,255,.06)" } },
-          y1:{ position:"right", ticks:{ color:"rgba(255,255,255,.7)" }, grid:{ drawOnChartArea:false } }
-        }
+        ...common,
+        scales: { ...common.scales, y1:{ position:"right", ticks:{ color:"rgba(255,255,255,.7)" }, grid:{ drawOnChartArea:false } } }
       }
     });
   }
@@ -504,7 +526,6 @@
     airlineChart.data.datasets[1].data = byAir.map(x=>x.qty);
     airlineChart.update();
 
-    // avg ATP per route + qty
     const m = new Map();
     for (const r of rows){
       const k = r.route ?? "(Unknown)";
@@ -515,12 +536,8 @@
       o.qty += (Number(r.qty)||0);
     }
     const byRoute = [...m.entries()].map(([k,v])=>({
-      key:k,
-      atpAvg: v.count ? v.sumATP / v.count : 0,
-      qty: v.qty
-    }))
-    .sort((a,b)=>b.atpAvg-a.atpAvg)
-    .slice(0, 10);
+      key:k, atpAvg: v.count ? v.sumATP / v.count : 0, qty: v.qty
+    })).sort((a,b)=>b.atpAvg-a.atpAvg).slice(0, 10);
 
     routeChart.data.labels = byRoute.map(x=>x.key);
     routeChart.data.datasets[0].data = byRoute.map(x=>Math.round(x.atpAvg));
@@ -529,12 +546,11 @@
   }
 
   // =========================
-  // 4) RENDER
+  // RENDER SUMMARY
   // =========================
-  function render(rows){
+  function renderSummary(rows){
     const from = document.getElementById("dateFrom").value;
     const to = document.getElementById("dateTo").value;
-
     const rangeText = (from || to) ? `${from || "…"} → ${to || "…"}`
                                    : "All Dates";
     document.getElementById("rangeLabel").textContent = rangeText;
@@ -562,7 +578,6 @@
     const totalIssued = rows.reduce((a,r)=>a+(Number(r.issued)||0),0);
     const totalAmount = rows.reduce((a,r)=>a+(Number(r.amount)||0),0);
     const leadAvg = avg(rows, "leadTime");
-
     document.getElementById("kpiReq").textContent = fmtInt(totalReq);
     document.getElementById("kpiIssued").textContent = fmtInt(totalIssued);
     document.getElementById("kpiAmount").textContent = fmtIDR(totalAmount);
@@ -585,7 +600,7 @@
     document.getElementById("summarySite").textContent =
       (site === "__ALL__") ? "All Site" : site;
 
-    render(rows);
+    renderSummary(rows);
   }
 
   function resetFilters(){
@@ -596,10 +611,49 @@
   }
 
   // =========================
-  // 5) INIT
+  // RENDER DAILY
+  // =========================
+  function renderDailyTransactions(){
+    const picked = document.getElementById("dailyDate").value;
+    const label = picked ? picked : "All Dates";
+    document.getElementById("dailyLabel").textContent = label;
+
+    const rows = dailyTransactions
+      .filter(r => picked ? r.date === picked : true)
+      .sort((a,b)=> (a.date > b.date ? -1 : 1));
+
+    const tbody = document.getElementById("dailyTbody");
+    tbody.innerHTML = "";
+
+    for (const r of rows){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${r.date}</td>
+        <td><b>${r.site}</b></td>
+        <td class="muted">${r.trxId}</td>
+        <td>${r.airline}</td>
+        <td class="muted">${r.route}</td>
+        <td class="num">${fmtInt(r.qty)}</td>
+        <td class="num">${fmtIDR(r.amount)}</td>
+        <td class="num">${fmtIDR(r.planBudgetIBS)}</td>
+      `;
+      tbody.appendChild(tr);
+    }
+    document.getElementById("dailyCount").textContent = `${rows.length} transaksi`;
+  }
+
+  // =========================
+  // DAILY COLLAPSE SLIDER
+  // =========================
+  function toggleDaily(){
+    const card = document.getElementById("dailyCard");
+    card.classList.toggle("collapsed");
+  }
+
+  // =========================
+  // INIT
   // =========================
   function init(){
-    // dropdown site (Distrik = Site)
     const sites = ["__ALL__", ...Array.from(new Set(data.map(d=>d.site))).sort()];
     const sel = document.getElementById("siteSelect");
     sel.innerHTML = "";
@@ -615,12 +669,15 @@
     document.getElementById("applyBtn").addEventListener("click", applyFilters);
     document.getElementById("resetBtn").addEventListener("click", resetFilters);
 
-    // auto update biar interaktif
     sel.addEventListener("change", applyFilters);
     document.getElementById("dateFrom").addEventListener("change", applyFilters);
     document.getElementById("dateTo").addEventListener("change", applyFilters);
 
+    document.getElementById("dailyDate").addEventListener("change", renderDailyTransactions);
+    document.getElementById("dailyToggle").addEventListener("click", toggleDaily);
+
     resetFilters();
+    renderDailyTransactions();
   }
 
   init();

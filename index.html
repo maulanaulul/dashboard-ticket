@@ -426,14 +426,14 @@
   const data = [
     {date:"2026-02-01", site:"ABKL", leadTime:21, qty:737,  planBudgetIBS: 900_000_000,  amount: 997_942_494,  atp: 1_354_060, airline:"LION AIR",   route:"YIA-BPN", requested: 740, issued: 737},
     {date:"2026-02-02", site:"ARIA", leadTime:32, qty:903,  planBudgetIBS: 1_150_000_000,amount: 1_265_862_691,atp: 1_401_841, airline:"SUPER AIR", route:"BPN-YIA", requested: 910, issued: 903},
-    {date:"2026-02-03", site:"ASMI", leadTime:22, qty:2723, planBudgetIBS: 3_300_000_000,amount: 3_600_584_522,atp: 1_322_286, airline:"CITILINK",  route:"CGK-CKG", requested: 2750, issued: 2723},
-    {date:"2026-02-04", site:"BAYA", leadTime:28, qty:2963, planBudgetIBS: 4_000_000_000,amount: 4_260_461_441,atp: 1_437_888, airline:"GARUDA",    route:"CKG-BPN", requested: 3000, issued: 2963},
+    {date:"2026-02-03", site:"ASMI", leadTime:22, qty:2723, planBudgetIBS: 3_300_000_000,amount: 3_600_584_522,atp: 1_322_286, airline:"CITILINK",  route:"CGK-CGK", requested: 2750, issued: 2723},
+    {date:"2026-02-04", site:"BAYA", leadTime:28, qty:2963, planBudgetIBS: 4_000_000_000,amount: 4_260_461_441,atp: 1_437_888, airline:"GARUDA",    route:"CGK-BPN", requested: 3000, issued: 2963},
     {date:"2026-02-05", site:"BEKB", leadTime:21, qty:1556, planBudgetIBS: 1_900_000_000,amount: 1_987_127_388,atp: 1_277_074, airline:"WINGS AIR", route:"SUB-BPN", requested: 1600, issued: 1556},
     {date:"2026-02-05", site:"BRCB", leadTime:22, qty:1722, planBudgetIBS: 4_200_000_000,amount: 4_593_529_751,atp: 2_667_555, airline:"BATIK AIR", route:"BPN-SUB", requested: 1750, issued: 1722},
     {date:"2026-02-06", site:"BRCG", leadTime:25, qty:1040, planBudgetIBS: 2_450_000_000,amount: 2_687_897_924,atp: 2_584_517, airline:"PELITA AIR",route:"BPN-SRG", requested: 1100, issued: 1040},
     {date:"2026-02-07", site:"BTSJ", leadTime:26, qty:999,  planBudgetIBS: 1_350_000_000,amount: 1_417_052_606,atp: 1_419_892, airline:"LION AIR",  route:"PKY-SRG", requested: 1030, issued: 999},
     {date:"2026-02-08", site:"INDO", leadTime:24, qty:3313, planBudgetIBS: 4_450_000_000,amount: 4_670_616_190,atp: 1_409_785, airline:"CITILINK", route:"SRG-PKY", requested: 3400, issued: 3313},
-    {date:"2026-02-09", site:"KIDE", leadTime:33, qty:4724, planBudgetIBS: 6_100_000_000,amount: 6_545_419_305,atp: 1_385_567, airline:"GARUDA",   route:"BPN-CKG", requested: 4800, issued: 4724},
+    {date:"2026-02-09", site:"KIDE", leadTime:33, qty:4724, planBudgetIBS: 6_100_000_000,amount: 6_545_419_305,atp: 1_385_567, airline:"GARUDA",   route:"BPN-CGK", requested: 4800, issued: 4724},
   ];
 
   // =========================
@@ -445,7 +445,7 @@
     {date:"2026-02-05", site:"BRCB", trxId:"TRX-0003", airline:"BATIK AIR", route:"BPN-SUB", qty:6,  amount: 14_200_000, planBudgetIBS: 14_000_000},
     {date:"2026-02-06", site:"BRCG", trxId:"TRX-0004", airline:"PELITA AIR", route:"BPN-SRG", qty:4, amount:  9_500_000, planBudgetIBS: 10_000_000},
     {date:"2026-02-06", site:"INDO", trxId:"TRX-0005", airline:"CITILINK", route:"SRG-PKY", qty:10, amount: 16_800_000, planBudgetIBS: 17_000_000},
-    {date:"2026-02-07", site:"KIDE", trxId:"TRX-0006", airline:"GARUDA", route:"BPN-CKG", qty:5, amount: 11_100_000, planBudgetIBS: 12_000_000},
+    {date:"2026-02-07", site:"KIDE", trxId:"TRX-0006", airline:"GARUDA", route:"BPN-CGK", qty:5, amount: 11_100_000, planBudgetIBS: 12_000_000},
   ];
 
   // =========================
@@ -684,4 +684,5 @@
 </script>
 </body>
 </html>
+
 
